@@ -26,6 +26,10 @@ case "$1" in
     echo "🔨 Testing build process..."
     node test-build.js
     ;;
+  "compress-and-run")
+    echo "🔄 Running Codex pipeline with MCP context..."
+    ./compress-and-run.sh
+    ;;
   *)
     echo "Codex - A simple static site generator"
     echo ""
@@ -37,6 +41,7 @@ case "$1" in
     echo "  generate [topic]     Generate content with AI (optional topic)"
     echo "  test-openai          Test OpenAI API connectivity"
     echo "  test-build           Test the build process"
+    echo "  compress-and-run     Run Codex pipeline with MCP context"
     echo ""
     ;;
 esac

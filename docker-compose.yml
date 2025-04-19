@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  # MCP server container
+  mcp:
+    image: node:22
+    command: >
+      bash -c "npm install -g @mark3labs/mcp-filesystem-server
+               && mcp-filesystem-server --port 6060 --root /workspace"
+    volumes:
+      - ./:/workspace
+    ports:
+      - "6060:6060"
+
+  # Codex pipeline container
+  codex:
+    build: .
+    volumes:
+      - ./:/workspace
+    ports:
+      # expose if you want REPL, otherwise optional
+      - "8080:8080"
+    depends_on:
+      - mcp
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}

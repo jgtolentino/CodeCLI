@@ -1,0 +1,99 @@
+Understood—let’s turn this into a **fully‑running** application, no mocks or demo modes. We’ll containerize both MCP and your Codex pipeline so that a single `docker-compose up` actually spins up:
+
+---
+
+## 1. Dockerize MCP + Codex pipeline
+
+### a) `Dockerfile` at project root
+
+```dockerfile
+# Use Node 22 so Codex CLI works out of the box
+FROM node:22
+
+# Install MCP Filesystem Server globally
+RUN npm install -g @openai/codex \
+    && npm install -g @mark3labs/mcp-filesystem-server
+
+WORKDIR /workspace
+
+# Copy your site + scripts in
+COPY mysite/ ./mysite/
+
+# Install site deps
+WORKDIR /workspace/mysite
+RUN npm install
+
+# Ensure scripts are executable
+RUN chmod +x codex.sh summarise.sh test-openai.js
+
+# Default to our compress‑and‑run pipeline
+ENTRYPOINT ["bash", "codex.sh", "compress-and-run"]
+```
+
+### b) `docker-compose.yml`
+
+```yaml
+version: "3.8"
+services:
+  # MCP server container
+  mcp:
+    image: node:22
+    command: >
+      bash -c "npm install -g @mark3labs/mcp-filesystem-server
+               && mcp-filesystem-server --port 6060 --root /workspace"
+    volumes:
+      - ./:/workspace
+    ports:
+      - "6060:6060"
+
+  # Codex pipeline container
+  codex:
+    build: .
+    volumes:
+      - ./:/workspace
+    ports:
+      # expose if you want REPL, otherwise optional
+      - "8080:8080"
+    depends_on:
+      - mcp
+```
+
+---
+
+## 2. How it works
+
+1. **`mcp`** service mounts your repo at `/workspace`, runs the real MCP filesystem server on port 6060.  
+2. **`codex`** service builds from our `Dockerfile`, installs both MCP client and Codex CLI, and then automatically runs your `compress‑and‑run` pipeline (per the `ENTRYPOINT`).  
+3. You get live, end‑to‑end output in your terminal—no stubs, no mocks.  
+
+---
+
+## 3. Run it
+
+```bash
+docker-compose up --build
+```
+
+You’ll see:
+
+- MCP logs reading your local files,
+- then Codex fetching that context, compressing it, and running your real prompts against OpenAI.
+
+---
+
+## 4. One‑click on Replit / CI
+
+- **Replit:** Set the “Run” command to  
+  ```bash
+  docker-compose up --build
+  ```
+
+- **CI (GitHub Actions):**  
+  ```yaml
+  steps:
+    - uses: actions/checkout@v3
+    - name: Build & run Codex pipeline
+      run: docker-compose up --build --exit-code-from codex
+  ```
+
+That way every push actually spins up both services, runs your true pipeline, and fails if anything breaks—no simulations.
