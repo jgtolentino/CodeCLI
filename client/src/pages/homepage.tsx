@@ -442,6 +442,92 @@ npm install`}</code>
         </div>
       </section>
 
+      {/* AI Content Generation */}
+      <section className="py-12 bg-gray-50 border-t border-b border-gray-200">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold mb-4">AI-Powered Content Generation</h2>
+              <p className="text-lg text-gray-600">Let artificial intelligence create your website content. Powered by OpenAI's GPT models.</p>
+            </div>
+            
+            <Card className="p-6 mb-6 bg-white shadow-md border border-gray-100">
+              <CardContent className="p-0">
+                <div className="mb-4">
+                  <label htmlFor="topic" className="block text-sm font-medium text-gray-700 mb-1">
+                    Content Topic
+                  </label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      id="topic" 
+                      className="flex-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-primary-500 focus:border-primary-500" 
+                      placeholder="Enter a topic (e.g., Web Development, Digital Marketing)"
+                    />
+                    <Button 
+                      className="bg-primary-600 hover:bg-primary-700 text-white"
+                      onClick={() => {
+                        const topic = (document.getElementById('topic') as HTMLInputElement).value;
+                        toast({
+                          title: "Generating Content",
+                          description: `Creating content about: ${topic || 'Codex Static Site Generator'}`,
+                        });
+                        
+                        // Call the server API to generate content
+                        fetch('/api/generate-content', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({ topic })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                          if (data.success) {
+                            toast({
+                              title: "Content Generated!",
+                              description: "Your site content has been created using AI. Click 'Build Site' to generate your HTML.",
+                              variant: "default",
+                            });
+                          } else {
+                            toast({
+                              title: "Content Generation Failed",
+                              description: data.message || "An error occurred while generating content.",
+                              variant: "destructive",
+                            });
+                          }
+                        })
+                        .catch(error => {
+                          toast({
+                            title: "Error",
+                            description: "Failed to generate content. Please try again.",
+                            variant: "destructive",
+                          });
+                        });
+                      }}
+                    >
+                      Generate Content
+                    </Button>
+                  </div>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Provide a topic and we'll generate professional website content using AI.
+                  </p>
+                </div>
+                <div className="mt-6 p-4 bg-gray-50 rounded-md border border-gray-200">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">How it works:</h4>
+                  <ol className="space-y-2 text-sm text-gray-600 list-decimal pl-5">
+                    <li>Enter a topic for your website content</li>
+                    <li>Our AI generates a complete content package including title, subtitle, main content, and features</li>
+                    <li>The generated content is saved to <code className="text-xs bg-gray-100 p-1 rounded">data/site.json</code></li>
+                    <li>Build your site to create the HTML with your new content</li>
+                  </ol>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 bg-gray-900 text-white">
         <div className="container mx-auto px-4 text-center">
