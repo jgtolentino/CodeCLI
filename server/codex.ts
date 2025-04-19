@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import 'dotenv/config';
 
 interface CodexConfig {
   templateDir: string;
@@ -15,6 +16,19 @@ const mysitePath = path.join(__dirname, '..', 'mysite');
 
 function readConfig(): CodexConfig {
   try {
+    // First try to read from environment variables
+    const envConfig = {
+      templateDir: process.env.TEMPLATE_DIR,
+      dataDir: process.env.DATA_DIR,
+      outputDir: process.env.OUTPUT_DIR,
+    };
+    
+    // If all env variables are present, use them
+    if (envConfig.templateDir && envConfig.dataDir && envConfig.outputDir) {
+      return envConfig as CodexConfig;
+    }
+    
+    // Otherwise, fall back to codex.json
     const configPath = path.join(mysitePath, 'codex.json');
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     
