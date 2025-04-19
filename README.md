@@ -28,7 +28,13 @@ Codex is a lightweight static site generator that transforms JSON data and HTML 
 
 3. **Set up OpenAI API key (for API testing)**
    
-   Create a `.env` file in the root directory and add your OpenAI API key:
+   Copy the `.env.example` file to `.env` and add your OpenAI API key:
+   ```bash
+   cp .env.example .env
+   # Edit .env file to add your API key
+   ```
+
+   The `.env` file should contain:
    ```
    OPENAI_API_KEY=your_api_key_here
    ```
@@ -69,7 +75,13 @@ We've containerized both MCP (Model Context Provider) and the Codex pipeline for
 
 2. **Set up OpenAI API key**
    
-   Create a `.env` file in the root directory and add your OpenAI API key:
+   Copy the `.env.example` file to `.env` and add your OpenAI API key:
+   ```bash
+   cp .env.example .env
+   # Edit .env file to add your API key
+   ```
+
+   The `.env` file should contain:
    ```
    OPENAI_API_KEY=your_api_key_here
    ```
