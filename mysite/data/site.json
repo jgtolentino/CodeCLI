@@ -1,4 +1,20 @@
 {
   "title": "Welcome to Codex",
-  "message": "Your content here"
+  "subtitle": "A simple static site generator with AI capabilities",
+  "content": "<p>Codex is a lightweight static site generator that transforms JSON data and HTML templates into fully functional static websites. With its simple architecture and flexible templating system, Codex makes it easy to create content-driven websites without the complexity of a full CMS.</p><p>This page was created using a basic HTML template and JSON data. The content you're reading right now came from the <code>site.json</code> file in the <code>data</code> directory.</p><p>Want to customize this content? You can:</p><ul><li>Edit the JSON data files directly</li><li>Modify the HTML templates</li><li>Use our AI content generator to create new content</li></ul>",
+  "features": [
+    {
+      "title": "JSON-Driven Content",
+      "description": "Store your content as structured JSON data that's easy to manage and version control."
+    },
+    {
+      "title": "Simple Template System",
+      "description": "Use Mustache-style templates with variables like {{title}} that get replaced with your content."
+    },
+    {
+      "title": "AI Content Generation",
+      "description": "Generate professional content using OpenAI's GPT models with a simple command."
+    }
+  ],
+  "generatedAt": "2024-04-19T03:45:00.000Z"
 }

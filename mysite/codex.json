@@ -3,8 +3,7 @@
   "dataDir": "data",
   "outputDir": "out",
   "variables": {
-    "siteTitle": "My Codex Site",
-    "baseUrl": "https://example.com"
-  },
-  "plugins": []
+    "siteName": "Codex",
+    "version": "1.0.0"
+  }
 }
