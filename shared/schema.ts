@@ -1,114 +1,47 @@
-import { pgTable, text, serial, integer, boolean, jsonb, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// Main configuration schema
-export interface BuildConfig {
-  site: {
-    name: string;
-    description?: string;
-    baseUrl?: string;
-  };
-  build: {
-    inputDir: string;
-    outputDir: string;
-    dataDir: string;
-  };
-  server: {
-    port: number;
-  };
-  plugins?: any[];
-}
+// Define the configuration schema
+export const configSchema = z.object({
+  templateDir: z.string(),
+  dataDir: z.string(),
+  outputDir: z.string(),
+  variables: z.record(z.string()).optional(),
+  plugins: z.array(z.string()).optional()
+});
 
-// Template schema
-export interface Template {
-  name: string;
-  content: string;
-}
+export type CodexConfig = z.infer<typeof configSchema>;
 
-// Data file schema
-export interface DataFile {
-  name: string;
-  content: any;
-}
+// Define the site data schema
+export const siteDataSchema = z.object({
+  title: z.string(),
+  message: z.string()
+}).catchall(z.any());
+
+export type SiteData = z.infer<typeof siteDataSchema>;
 
 // Build result schema
-export interface BuildResult {
-  startTime: Date;
-  endTime: Date;
-  duration: number;
-  filesGenerated: number;
-  success: boolean;
-}
+export const buildResultSchema = z.object({
+  pagesGenerated: z.number(),
+  timeInMs: z.number(),
+  success: z.boolean(),
+  error: z.string().optional()
+});
 
-// Build status schema
-export interface BuildStatus {
-  isBuilding: boolean;
-  lastBuild: Date | null;
-  error: string | null;
-  lastBuildResult?: BuildResult | null;
-}
+export type BuildResult = z.infer<typeof buildResultSchema>;
 
-// Database schemas
-export const templates = pgTable("templates", {
+// Database table for users (keep this for compatibility)
+export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  content: text("content").notNull(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
 });
 
-export const dataFiles = pgTable("data_files", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  content: jsonb("content").notNull(),
+export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  password: true,
 });
 
-export const buildLogs = pgTable("build_logs", {
-  id: serial("id").primaryKey(),
-  startTime: timestamp("start_time").notNull(),
-  endTime: timestamp("end_time").notNull(),
-  duration: integer("duration").notNull(),
-  filesGenerated: integer("files_generated").notNull(),
-  success: boolean("success").notNull(),
-  error: text("error"),
-});
-
-// Zod schemas for validation
-export const buildConfigSchema = z.object({
-  site: z.object({
-    name: z.string(),
-    description: z.string().optional(),
-    baseUrl: z.string().optional(),
-  }),
-  build: z.object({
-    inputDir: z.string(),
-    outputDir: z.string(),
-    dataDir: z.string(),
-  }),
-  server: z.object({
-    port: z.number(),
-  }),
-  plugins: z.array(z.any()).optional(),
-});
-
-export const templateSchema = z.object({
-  name: z.string(),
-  content: z.string(),
-});
-
-export const dataFileSchema = z.object({
-  name: z.string(),
-  content: z.any(),
-});
-
-// Insert schemas
-export const insertTemplateSchema = createInsertSchema(templates);
-export const insertDataFileSchema = createInsertSchema(dataFiles);
-export const insertBuildLogSchema = createInsertSchema(buildLogs);
-
-// Types
-export type InsertTemplate = z.infer<typeof insertTemplateSchema>;
-export type InsertDataFile = z.infer<typeof insertDataFileSchema>;
-export type InsertBuildLog = z.infer<typeof insertBuildLogSchema>;
-export type TemplateType = typeof templates.$inferSelect;
-export type DataFileType = typeof dataFiles.$inferSelect;
-export type BuildLogType = typeof buildLogs.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
