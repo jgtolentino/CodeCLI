@@ -65,7 +65,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Make the script executable if it's not already
       try {
         fs.chmodSync(generatePath, '755');
-      } catch (error) {
+      } catch (error: any) {
         console.warn(`Warning: Could not make script executable: ${error.message}`);
       }
       
@@ -105,7 +105,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating content:', error);
       res.status(500).json({
         success: false,

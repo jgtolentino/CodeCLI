@@ -66,9 +66,46 @@ function readDataFiles(dataDir: string): Record<string, any> {
 }
 
 function processTemplate(template: string, data: Record<string, any>): string {
-  return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
-    return data[key] !== undefined ? data[key] : match;
+  let processedTemplate = template;
+  
+  // Process simple variable replacements: {{variable}}
+  processedTemplate = processedTemplate.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+    return data[key] !== undefined ? String(data[key]) : match;
   });
+  
+  // Process unescaped HTML content: {{{variable}}}
+  processedTemplate = processedTemplate.replace(/\{\{\{(\w+)\}\}\}/g, (match, key) => {
+    return data[key] !== undefined ? String(data[key]) : match;
+  });
+  
+  // Process array iterations: {{#array}}...{{/array}}
+  const arrayRegex = /\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g;
+  let arrayMatch;
+  
+  while ((arrayMatch = arrayRegex.exec(template)) !== null) {
+    const [fullMatch, arrayKey, itemTemplate] = arrayMatch;
+    
+    if (data[arrayKey] && Array.isArray(data[arrayKey])) {
+      const items = data[arrayKey];
+      let replacement = '';
+      
+      for (const item of items) {
+        let itemHtml = itemTemplate;
+        
+        // Replace item properties
+        for (const [key, value] of Object.entries(item)) {
+          const itemRegex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+          itemHtml = itemHtml.replace(itemRegex, String(value));
+        }
+        
+        replacement += itemHtml;
+      }
+      
+      processedTemplate = processedTemplate.replace(fullMatch, replacement);
+    }
+  }
+  
+  return processedTemplate;
 }
 
 function buildSite(): number {

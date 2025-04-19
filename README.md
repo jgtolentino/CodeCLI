@@ -1,139 +1,137 @@
 # Codex Static Site Generator
 
-A lightweight, JSON-driven static site generator that combines your data with HTML templates to create static websites.
+Codex is a lightweight static site generator that transforms JSON data and HTML templates into fully functional static websites. It's designed to be simple to use but powerful enough for a variety of use cases, from landing pages to documentation sites.
 
-## 🚀 Features
+## Features
 
-- **JSON-driven content**: Store all your content in easy-to-edit JSON files
-- **Mustache-style templates**: Use simple `{{variable}}` syntax in your HTML templates
-- **Fast builds**: Generate your entire site in milliseconds
-- **Built-in server**: Preview your site with the included Express server
-- **Simple API**: Trigger builds programmatically via HTTP endpoints
-- **Environment variable support**: Configure your site using environment variables
+- **JSON-Driven Content**: Store your content as structured JSON data files
+- **Simple Templating**: Use Mustache-style variables in HTML templates
+- **Fast Build Process**: Generate static sites in milliseconds
+- **Express Server**: Preview your site locally with the built-in server
+- **AI Content Generation**: Create professional content using OpenAI's GPT models
 
-## 📋 Quick Start
+## Quick Start
 
-1. **Clone the repository and install dependencies:**
+1. **Clone this repository**
+   ```bash
+   git clone https://github.com/yourusername/codex.git
+   cd codex
+   ```
 
-```bash
-git clone https://github.com/yourusername/codex.git
-cd codex
-npm install
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-2. **Add your content to JSON files in `mysite/data/`:**
+3. **Set up OpenAI API key (for AI content generation)**
+   
+   Create a `.env` file in the root directory and add your OpenAI API key:
+   ```
+   OPENAI_API_KEY=your_api_key_here
+   ```
 
-```json
-// mysite/data/site.json
-{
-  "title": "My Website",
-  "message": "Welcome to my website!"
-}
-```
+4. **Generate content with AI (optional)**
+   ```bash
+   cd mysite
+   node generate-content.js "Your topic here"
+   ```
 
-3. **Create your template in `mysite/template/`:**
+5. **Build your site**
+   ```bash
+   node ../server/codex.js
+   # or use the convenience script
+   ./codex.sh build
+   ```
 
-```html
-<!-- mysite/template/index.html -->
-<!DOCTYPE html>
-<html>
-<head>
-  <title>{{title}}</title>
-</head>
-<body>
-  <h1>{{title}}</h1>
-  <p>{{message}}</p>
-</body>
-</html>
-```
+6. **Start the development server**
+   ```bash
+   node server.js
+   # or use the convenience script
+   ./codex.sh serve
+   ```
 
-4. **Build and serve your site:**
+7. **View your site**
+   
+   Open your browser to http://localhost:1227
 
-```bash
-# Build the site
-npm run build
-
-# Start the server
-npm start
-```
-
-Your site will be available at http://localhost:5000
-
-## 🛠️ Directory Structure
+## Project Structure
 
 ```
-mysite/
-├── data/             # JSON content files
-│   └── site.json     # Main site content
-├── template/         # HTML templates 
-│   └── index.html    # Main template with {{variables}}
-├── out/              # Generated static files
-├── codex.json        # Project configuration
-├── codex.sh          # Shortcut script
-├── server.js         # Express server
-└── package.json      # Dependencies and scripts
+mysite/             # Main project directory
+├── template/       # HTML templates with {{variable}} placeholders
+│   └── index.html  # Main template
+├── data/           # JSON data files that populate templates
+│   └── site.json   # Main data file
+├── out/            # Generated output (HTML files)
+│   └── index.html  # Generated from template + data
+├── codex.json      # Configuration file
+├── codex.sh        # Convenience script for common commands
+├── generate-content.js  # AI content generation script
+└── server.js       # Express server for local preview
 ```
 
-## ⚙️ Configuration
+## Configuration
 
-Configure Codex using the `codex.json` file or environment variables:
+The `codex.json` file contains configuration options for your site:
 
 ```json
 {
   "templateDir": "template",
-  "dataDir": "data", 
+  "dataDir": "data",
   "outputDir": "out",
   "variables": {
-    "siteTitle": "My Site",
-    "baseUrl": "https://example.com"
-  },
-  "plugins": []
+    "siteName": "Codex",
+    "version": "1.0.0"
+  }
 }
 ```
 
-Or using `.env`:
+You can also use environment variables to override these settings:
 
 ```
-DATA_DIR=mysite/data
-TEMPLATE_DIR=mysite/template
-OUTPUT_DIR=mysite/out
-PORT=5000
+TEMPLATE_DIR=mytemplate
+DATA_DIR=mydata
+OUTPUT_DIR=public
 ```
 
-## 📡 API Endpoints
+## AI Content Generation
 
-Codex provides several API endpoints:
+Codex includes AI-powered content generation using OpenAI's GPT models. To use this feature:
 
-- **GET `/api/config`**: Get the current configuration
-- **GET `/api/data`**: Get the current site data
-- **POST `/api/build`**: Trigger a site build
+1. Make sure you have an OpenAI API key set in your `.env` file
+2. Run the generate-content.js script with a topic:
+   ```bash
+   node generate-content.js "Web Development"
+   ```
+3. The script will generate professional content for your site and save it to `data/site.json`
+4. Build your site to see the changes
 
-Example: Triggering a build
+## Web Interface
 
-```bash
-curl -X POST http://localhost:5000/api/build
-```
+Codex includes a web-based interface for managing your site, which provides:
 
-Response:
+- A dashboard for viewing your site metrics
+- Options to build your site and generate content via UI
+- Preview of your generated content
 
-```json
-{
-  "pagesGenerated": 1,
-  "timeInMs": 5,
-  "success": true
-}
-```
+## Template Variables
 
-## 🧪 Development
+Codex supports several types of template variables:
 
-Start the development server:
+- **Simple variables**: `{{variable}}` - Replaces with the content of the variable
+- **HTML content**: `{{{variable}}}` - Replaces with unescaped HTML content
+- **Arrays/Lists**: 
+  ```html
+  {{#items}}
+    <li>{{title}}</li>
+  {{/items}}
+  ```
 
-```bash
-npm run dev
-```
+## License
 
-This will start both the Express server and watch for file changes.
+MIT
 
-## 📝 License
+## Credits
 
-This project is MIT licensed.
+- Built with Express, Node.js, and React
+- AI content generation powered by OpenAI GPT models
