@@ -1,59 +1,14 @@
+#!/usr/bin/env node
 /**
- * Test script for the Codex build process
+ * Simple test script for the Codex build process
  * 
- * This script tests the build process by first making an API request to build the site,
- * then validating that the output files were generated correctly.
+ * This script performs a direct build using the server.js build command
+ * and then verifies the output files were generated correctly.
  */
 
-const http = require('http');
 const fs = require('fs');
 const path = require('path');
-
-// Configuration
-const HOST = process.env.HOST || 'localhost';
-const PORT = process.env.PORT || 1227;
-
-/**
- * Make an HTTP request
- * @param {string} method - HTTP method (GET, POST, etc.)
- * @param {string} path - API endpoint path
- * @returns {Promise<Object>} Response data
- */
-function makeRequest(method, path) {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: HOST,
-      port: PORT,
-      path,
-      method,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
-
-    const req = http.request(options, (res) => {
-      let data = '';
-      
-      res.on('data', (chunk) => {
-        data += chunk;
-      });
-      
-      res.on('end', () => {
-        try {
-          resolve(JSON.parse(data));
-        } catch (error) {
-          resolve(data);
-        }
-      });
-    });
-    
-    req.on('error', (error) => {
-      reject(error);
-    });
-    
-    req.end();
-  });
-}
+const { exec } = require('child_process');
 
 /**
  * Verify that the output files exist
@@ -79,7 +34,7 @@ function verifyOutputFiles(outputDir) {
       return false;
     }
     
-    console.log(`✓ Found ${files.length} generated files`);
+    console.log(`✅ Found ${files.length} generated files`);
     return true;
   } catch (error) {
     console.error('Error verifying output files:', error);
@@ -88,53 +43,48 @@ function verifyOutputFiles(outputDir) {
 }
 
 /**
- * Test the build process
+ * Run the build command and verify the output
  */
-async function testBuild() {
-  console.log('Testing Codex build process...');
+function runBuildTest() {
+  console.log('🔨 Testing Codex build process...');
   
+  // Read config file
   try {
-    // Step 1: Get configuration
-    console.log('1. Getting configuration...');
-    const config = await makeRequest('GET', '/api/config');
-    console.log('✓ Configuration:', config);
+    const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'codex.json'), 'utf8'));
+    console.log('✅ Configuration loaded');
     
-    // Step 2: Get site data
-    console.log('\n2. Getting site data...');
-    const data = await makeRequest('GET', '/api/data');
-    console.log('✓ Site data:', Object.keys(data));
-    
-    // Step 3: Build the site
-    console.log('\n3. Building site...');
-    const buildResult = await makeRequest('POST', '/api/build');
-    
-    if (buildResult.success) {
-      console.log(`✓ Build successful! Generated ${buildResult.pagesGenerated} pages in ${buildResult.timeInMs}ms`);
-    } else {
-      console.error(`✗ Build failed: ${buildResult.error}`);
-      process.exit(1);
-    }
-    
-    // Step 4: Verify output files
-    console.log('\n4. Verifying output files...');
-    const outputDir = path.join(__dirname, config.outputDir);
-    const filesExist = verifyOutputFiles(outputDir);
-    
-    if (filesExist) {
-      console.log('✓ All output files verified');
-    } else {
-      console.error('✗ Output file verification failed');
-      process.exit(1);
-    }
-    
-    console.log('\n--------------------------');
-    console.log('✅ All tests passed! Codex is working correctly.');
-    console.log('--------------------------');
+    // Run the build command
+    console.log('\nRunning build command...');
+    exec('node server.js build', (error, stdout, stderr) => {
+      if (error) {
+        console.error('❌ Build command failed:', error);
+        process.exit(1);
+        return;
+      }
+      
+      // Log the build output
+      console.log(stdout);
+      
+      // Verify the output files
+      console.log('\nVerifying output files...');
+      const outputDir = path.join(__dirname, config.outputDir || 'out');
+      const filesExist = verifyOutputFiles(outputDir);
+      
+      if (filesExist) {
+        console.log('\n--------------------------');
+        console.log('✅ Build test passed! Codex is working correctly.');
+        console.log('--------------------------');
+        process.exit(0);
+      } else {
+        console.error('❌ Output file verification failed');
+        process.exit(1);
+      }
+    });
   } catch (error) {
-    console.error('Test failed:', error);
+    console.error('❌ Failed to read configuration:', error);
     process.exit(1);
   }
 }
 
-// Run the tests
-testBuild();
+// Run the build test
+runBuildTest();

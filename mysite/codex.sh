@@ -1,12 +1,8 @@
-#!/bin/bash
-
-# Codex Shell Script
-# This script provides a convenient way to run Codex commands with environment variables loaded
+#!/usr/bin/env bash
+# codex.sh
 
 # Load environment variables from .env file if it exists
-if [ -f .env ]; then
-  export $(grep -v '^#' .env | xargs)
-fi
+[ -f .env ] && export $(grep -v '^#' .env | xargs)
 
 case "$1" in
   "build")
@@ -22,6 +18,14 @@ case "$1" in
     shift
     node generate-content.js "$@"
     ;;
+  "test-openai")
+    echo "🔌 Testing OpenAI connectivity..."
+    node test-openai.js
+    ;;
+  "test-build")
+    echo "🔨 Testing build process..."
+    node test-build.js
+    ;;
   *)
     echo "Codex - A simple static site generator"
     echo ""
@@ -31,6 +35,8 @@ case "$1" in
     echo "  build                Build the static site"
     echo "  serve, start         Start the development server"
     echo "  generate [topic]     Generate content with AI (optional topic)"
+    echo "  test-openai          Test OpenAI API connectivity"
+    echo "  test-build           Test the build process"
     echo ""
     ;;
 esac

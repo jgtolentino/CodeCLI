@@ -1,0 +1,129 @@
+Here’s a concrete example of how you can wire up a one‐click “test‐OpenAI” command in your Codex static‐site project:
+
+---
+
+## 1. `mysite/test-openai.js`
+
+```js
+#!/usr/bin/env node
+// test-openai.js
+import OpenAI from "openai";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+async function main() {
+  try {
+    const res = await openai.chat.completions.create({
+      model: "gpt-4o-mini",   
+      messages: [
+        { role: "user", content: "Hi there! Reply exactly: ✅ API is connected and working." }
+      ]
+    });
+    console.log(res.choices[0].message.content);
+  } catch (err) {
+    console.error("❌ OpenAI API error:", err.message || err);
+    process.exit(1);
+  }
+}
+
+main();
+```
+
+Make sure it’s executable:
+
+```bash
+chmod +x mysite/test-openai.js
+```
+
+---
+
+## 2. Update your `.env`
+
+In the project root (or in `mysite/`), add:
+
+```
+OPENAI_API_KEY=sk-YOUR_ACTUAL_KEY_HERE
+```
+
+---
+
+## 3. Tweak your `codex.sh`
+
+Replace or extend your existing launcher so you can run:
+
+```bash
+./codex.sh test-openai
+```
+
+```bash
+#!/usr/bin/env bash
+# codex.sh
+
+# load env if present
+[ -f .env ] && export $(grep -v '^#' .env | xargs)
+
+case "$1" in
+  test-openai)
+    shift
+    node test-openai.js
+    ;;
+  *)
+    # fall back to the normal Codex CLI
+    codex "$@"
+    ;;
+esac
+```
+
+Then make it executable:
+
+```bash
+chmod +x mysite/codex.sh
+```
+
+---
+
+## 4. Install dependencies
+
+From inside `mysite/`:
+
+```bash
+npm init -y
+npm install openai dotenv
+```
+
+---
+
+## 5. Run the test
+
+```bash
+cd mysite
+./codex.sh test-openai
+```
+
+You should see:
+
+```
+✅ API is connected and working.
+```
+
+If you get that, your pipeline is verified end‑to‑end:
+
+1. MCP still serving context  
+2. Codex CLI (now backed by OpenAI) doing your compression + prompt work  
+3. OpenAI returning a reply  
+4. Terminal prints success
+
+---
+
+### Next steps
+
+- **CI integration:** add a GitHub Action step that runs `./codex.sh test-openai` on every push.
+- **Replit deploy:** point the “Run” button at `codex.sh test-openai`.
+- **Extend the script:** swap in your real compression + refactor prompts in place of the simple “hello” ping.
+
+Let me know how it goes or if you want to bake this into your build pipeline!
