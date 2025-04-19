@@ -1,0 +1,39 @@
+A few extra checkpoints that tend to save time later, especially when you’ll be wiring Codex into Replit and CI:
+
+1. Environment variables and secrets  
+   • Does the README describe a `.env` file or expect variables passed at the CLI?  
+   • Any hard‑coded values (e.g., site URL) that need a safer override mechanism for staging and prod.
+
+2. Node tooling and linting  
+   • Look for an explicit `engines` field in `package.json`; Replit’s default Node may differ.  
+   • Presence of ESLint/Prettier or Husky hooks—important if they’ll block commits.
+
+3. Testing and CI status  
+   • Are there unit or integration tests you can run to confirm a clean clone builds?  
+   • Any GitHub Actions badges referencing a failing build you should note.
+
+4. Asset and image handling  
+   • Whether Codex copies images verbatim, optimizes them, or expects an external pipeline (Sharp, imagemin).  
+   • If the README warns about large build sizes or offers flags for asset hashing, jot that down.
+
+5. Theme or styling system  
+   • Check if it bundles a default Tailwind / Bootstrap config or encourages CSS‑in‑JS.  
+   • Good to know in case we want to swap branding colors later.
+
+6. Accessibility guidance  
+   • Any mention of ARIA, semantic HTML, or Lighthouse targets—helps us keep compliance in scope.
+
+7. Internationalization / localization hooks  
+   • Even if you don’t need them now, note if Codex has a strategy for multiple locales (folder‑based vs runtime).
+
+8. Performance and SEO notes  
+   • Does the generator output pre‑rendered metadata, sitemap, RSS, or OpenGraph tags by default?  
+   • Any guidance on core web vitals (hydration strategy, script splitting).
+
+9. Branching/versioning model  
+   • If the README references a `develop` branch or tags releases (v1.x vs main), capture that so we track against a stable version.
+
+10. Community engagement  
+   • CONTRIBUTING.md, code of conduct, or open issues that signal active maintenance—or lack thereof—useful when deciding how deep to customize.
+
+Let me know if you uncover anything unexpected—especially around output directory naming or required global CLIs—and I’ll help adjust the implementation plan.

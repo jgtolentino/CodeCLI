@@ -1,0 +1,37 @@
+Yes — there are a few sections that will save us time later if you capture them in detail while you’re in the README:
+
+1. **Prerequisites / Installation**  
+   *Exact* Node version, package‑manager expectations (npm vs pnpm vs yarn) and any global CLI the tool depends on.
+
+2. **Quick‑start & build commands**  
+   The canonical `dev`, `build`, and/or `export` scripts plus any flags (e.g., output dir override like `--out`, `--baseURL`). Note if the generator supports an in‑memory dev server or only static export.
+
+3. **Configuration file(s)**  
+   - File name & location (usually `codex.config.{js,ts,json}` or similar).  
+   - Schema: site metadata, theme settings, plugin array, etc.  
+   - Whether environment variables are supported for dynamic values (helpful for staging/production splits).
+
+4. **Directory structure conventions**  
+   Pay special attention to where **content**, **layouts/templates**, **static assets**, and the **final `out` (dist) folder** live. We already created `mysite/out/`, so we need to confirm that matches Codex’s default or learn how to point Codex there.
+
+5. **Markdown / MDX features**  
+   Any front‑matter keys it expects (title, slug, date, tags) and whether it supports MDX, syntax highlighting, or custom shortcodes. This affects how we’ll structure our pages.
+
+6. **Plugin / extension system**  
+   - How to register plugins or transformers.  
+   - What hooks exist (before/after render) in case we need custom logic.
+
+7. **Deployment instructions**  
+   Notes for Netlify, Vercel, GitHub Pages, or generic static hosting. Look for guidance on base paths—important if we host under a sub‑folder.
+
+8. **Known limitations / TODOs**  
+   Any items the author calls out as incomplete or experimental (e.g., image optimization, i18n). That tells us where we might need work‑arounds.
+
+9. **License & contribution guidelines**  
+   Just verify it’s MIT / Apache or compatible so we can safely customize.
+
+---
+
+If the README touches these, pull out the exact command names, file paths, and option flags—they’ll feed directly into our implementation plan.  
+
+Let me know if anything is unclear while you read, or if you spot config decisions (like output folder naming) that differ from what we've already set up. Once you’ve digested it and drafted the updated plan, share it and I’ll review before we hit **Approve plan & start**.
