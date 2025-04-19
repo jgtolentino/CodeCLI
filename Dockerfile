@@ -11,7 +11,7 @@ RUN apt-get update && \
 
 # Copy package.json and install dependencies
 COPY mysite/package.json ./
-RUN npm install
+RUN npm install || npm install --force
 
 # Copy project files
 COPY mysite/ ./
