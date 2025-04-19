@@ -1,24 +1,30 @@
-# Use Node 22 so Codex CLI works out of the box
-FROM node:22
+FROM node:20-slim
 
-# Install MCP Filesystem Server globally
-RUN npm install -g @openai/codex \
-    && npm install -g @mark3labs/mcp-filesystem-server
+# Set working directory
+WORKDIR /app
 
-WORKDIR /workspace
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y jq curl wget && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy your site + scripts in
-COPY mysite/ ./mysite/
-
-# Install site deps
-WORKDIR /workspace/mysite
+# Copy package.json and install dependencies
+COPY mysite/package.json ./
 RUN npm install
 
-# Ensure scripts are executable
-RUN chmod +x codex.sh test-openai.js compress-and-run.sh
+# Copy project files
+COPY mysite/ ./
 
-# Install jq for JSON processing
-RUN apt-get update && apt-get install -y jq
+# Copy .env file
+COPY .env ./
 
-# Default to our compress-and-run pipeline
-ENTRYPOINT ["bash", "codex.sh", "compress-and-run"]
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=8080
+
+# Expose port
+EXPOSE 8080
+
+# Command to run
+CMD ["node", "server.js"]
