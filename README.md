@@ -118,11 +118,13 @@ We've containerized both MCP (Model Context Provider) and the Codex pipeline for
 │   ├── codex.json  # Configuration file
 │   ├── codex.sh    # Convenience script for common commands
 │   ├── compress-and-run.sh  # MCP pipeline script
-│   ├── generate-content.js  # AI content generation script
 │   ├── test-openai.js  # OpenAI API connectivity test
 │   └── server.js   # Express server for local preview
 ├── Dockerfile      # Docker container definition
 ├── docker-compose.yml  # Multi-container Docker configuration
+├── .env.example    # Example environment variables template
+├── .env.test       # Test environment for CI/CD
+├── .gitignore      # Git ignore configuration
 └── .env            # Environment variables (API keys, etc.)
 ```
 
@@ -161,6 +163,18 @@ Codex includes OpenAI API connectivity for future AI features. The current imple
    ./codex.sh test-openai
    ```
 3. If successful, you'll see a confirmation message that the API is connected and working
+
+### Success Output
+
+When the test is successful, you'll see output similar to:
+
+```
+Testing OpenAI API connectivity...
+Success! OpenAI API connection is working properly.
+Response: API connectivity confirmed. Connection successful.
+```
+
+The test output is also logged to `openai-test-output.log` for later review.
 
 ## Web Interface
 
