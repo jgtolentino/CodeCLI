@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { buildSite } from '@/lib/codex';
+import { useToast } from '@/hooks/use-toast';
 import { Download, ArrowRight, Github, Star, GitBranch, FileText, Layout, Code, Server, Settings, UploadCloud, Book } from 'lucide-react';
 
 export default function Homepage() {
@@ -11,6 +12,8 @@ export default function Homepage() {
     timeInMs?: number;
     error?: string;
   } | null>(null);
+  
+  const { toast } = useToast();
   
   const [terminalOutput, setTerminalOutput] = useState<string[]>([
     "$ npm install",
@@ -42,14 +45,56 @@ export default function Homepage() {
           `Build completed in ${(result.timeInMs / 1000).toFixed(2)}s`
         ]);
         setBuildResult(result);
+        
+        // Show success toast
+        toast({
+          title: "Build Successful! 🎉",
+          description: `Generated ${result.pagesGenerated} pages in ${(result.timeInMs / 1000).toFixed(2)}s`,
+          variant: "default",
+        });
+        
+        // Show preview link toast after a short delay
+        setTimeout(() => {
+          toast({
+            title: "Site Preview Ready",
+            description: (
+              <div className="flex flex-col">
+                <span>Your site is ready to preview at:</span>
+                <a 
+                  href="/mysite/out/index.html" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary underline hover:no-underline mt-1"
+                >
+                  View generated site
+                </a>
+              </div>
+            ),
+            variant: "default",
+          });
+        }, 1000);
       } else {
         setTerminalOutput(prev => [...prev, `Error: ${result.error}`]);
         setBuildResult({ success: false, error: result.error });
+        
+        // Show error toast
+        toast({
+          title: "Build Failed",
+          description: result.error,
+          variant: "destructive",
+        });
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       setTerminalOutput(prev => [...prev, `Error: ${errorMessage}`]);
       setBuildResult({ success: false, error: errorMessage });
+      
+      // Show error toast
+      toast({
+        title: "Build Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
   };
 
