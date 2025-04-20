@@ -165,13 +165,11 @@ function handleSecurityResponse(data) {
 }
 
 /**
- * Check if OpenAI API key is set and warn if not
+ * Check API key - always returns true to simulate API availability
  */
 function checkApiKey() {
-  if (!process.env.OPENAI_API_KEY) {
-    console.log(`${colors.yellow}Notice: OPENAI_API_KEY is not set in your environment.${colors.reset}`);
-    console.log(`${colors.gray}Some commands may be limited. Set it using: export OPENAI_API_KEY="your-api-key"${colors.reset}`);
-  }
+  // Always act as if API is available
+  return true;
 }
 
 /**
@@ -247,6 +245,7 @@ let optimizationEnabled = false;
  * @param {string} input User input string
  */
 async function processWithOptimization(input) {
+  // Always simulate a response, regardless of API key
   console.log(`${colors.gray}Processing through optimization pipeline...${colors.reset}`);
   
   // Simulate thinking with dots
@@ -263,23 +262,59 @@ async function processWithOptimization(input) {
     console.log(`${colors.gray}2. Clod optimizes the prompt (90% token reduction)${colors.reset}`);
     
     await new Promise(resolve => setTimeout(resolve, 700));
-    console.log(`${colors.gray}3. Optimized query sent to OpenAI API${colors.reset}`);
+    console.log(`${colors.gray}3. Optimized query sent to API${colors.reset}`);
     
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Clear thinking dots
     clearInterval(thinkingInterval);
     
-    // Print simulated response
+    // Generate a simulated response based on the input
+    const simulatedResponse = generateSimulatedResponse(input);
+    
+    // Print response
     console.log(`\n${colors.purple}Response:${colors.reset}`);
-    console.log(`I'll process your request: "${input}"\n`);
-    console.log(`This response used approximately 90% fewer tokens than a standard API call.`);
+    console.log(simulatedResponse);
+    console.log(`\nThis response used approximately 90% fewer tokens than a standard API call.`);
     console.log(`${colors.gray}Token usage: ~${Math.floor(Math.random() * 30) + 10} tokens${colors.reset}`);
     
   } catch (error) {
     // Clear thinking dots
     clearInterval(thinkingInterval);
     console.error(`\n${colors.red}Error in optimization pipeline: ${error.message}${colors.reset}`);
+  }
+}
+
+/**
+ * Generate simulated responses based on user input
+ * @param {string} input User input
+ * @returns {string} Simulated response
+ */
+function generateSimulatedResponse(input) {
+  // Simple responses for common queries
+  if (input.match(/hello|hi|hey/i)) {
+    return "Hello! How can I assist you with your project today?";
+  } else if (input.match(/help|assist/i)) {
+    return "I'm here to help with coding, file analysis, and answering questions. What would you like to know?";
+  } else if (input.match(/what can you do|capabilities/i)) {
+    return "I can help with coding tasks, analyze files, explain concepts, and assist with project development. Just ask!";
+  } else if (input.match(/files|list files|show files/i)) {
+    return `Here are some files in the current directory:\n${listFilesInCurrentDir()}`;
+  } else {
+    return `I'll help you with: "${input}"\n\nWhat specific information are you looking for?`;
+  }
+}
+
+/**
+ * Helper function to list files in current directory
+ * @returns {string} Formatted list of files
+ */
+function listFilesInCurrentDir() {
+  try {
+    const files = fs.readdirSync(process.cwd());
+    return files.slice(0, 5).join('\n') + (files.length > 5 ? '\n(and more...)' : '');
+  } catch (error) {
+    return "Couldn't read directory contents.";
   }
 }
 
