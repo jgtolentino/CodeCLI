@@ -487,12 +487,8 @@ function processCommand(input) {
     console.log(`${colors.red}Unknown command: ${command}${colors.reset}`);
     console.log(`Type ${colors.purple}/help${colors.reset} for available commands`);
   } else if (command) {
-    // Debug optimization status
-    console.log(`${colors.gray}Debug: Optimization status = ${optimizationEnabled ? 'ENABLED' : 'DISABLED'}${colors.reset}`);
-    
     // If optimization is enabled, use pipeline
     if (optimizationEnabled) {
-      console.log(`${colors.gray}Using optimization pipeline...${colors.reset}`);
       processWithOptimization(command);
     } else {
       // Process as a basic prompt - suggest enabling optimization
