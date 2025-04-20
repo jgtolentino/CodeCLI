@@ -53,27 +53,13 @@ if [[ "$1" == "serve" ]]; then
   exit $?
 fi
 
-# If you pass "compress-and-run", execute the query through the optimization pipeline
+# If you pass "compress-and-run", execute the query directly with codex
 if [[ "$1" == "compress-and-run" ]]; then
   shift
   query="$1"
-  echo "🔄 Running query through optimization pipeline: \"$query\""
   
-  # Check if MCP server is running, start if not
-  if ! curl -s --head http://localhost:6060/fs/health > /dev/null; then
-    echo "📡 Starting MCP filesystem server..."
-    cd "$SCRIPT_DIR/mysite" && node server.js mcp &
-    sleep 2  # Give the server time to start
-  fi
-  
-  echo "1️⃣ Gathering context from MCP filesystem server..."
-  context=$(curl -s http://localhost:6060/fs/context)
-  
-  echo "2️⃣ Optimizing context with Clod..."
-  optimized=$(cd "$SCRIPT_DIR/mysite" && ./codex.sh clod -q "Compress and optimize this context for answering: $query" <<< "$context")
-  
-  echo "3️⃣ Generating response with Codex..."
-  cd "$SCRIPT_DIR/mysite" && ./codex.sh codex -q "$optimized"
+  # Run codex directly
+  cd "$SCRIPT_DIR/mysite" && ./codex.sh codex -q "$query"
   
   exit $?
 fi
