@@ -187,7 +187,8 @@ function startApp() {
   // Print welcome message
   console.log(`\n${colors.yellow}✦ Welcome to ${colors.reset}${colors.white}${config.appName}${colors.reset} research preview!\n`);
   console.log(`${colors.gray}/help for help${colors.reset}`);
-  console.log(`${colors.gray}cwd: ${cwd}${colors.reset}\n`);
+  console.log(`${colors.gray}cwd: ${cwd}${colors.reset}`);
+  console.log(`${colors.gray}Optimization pipeline: ${optimizationEnabled ? 'enabled' : 'disabled'}${colors.reset}\n`);
 
   // Print tips
   console.log(`Tips for getting started:\n`);
@@ -381,6 +382,15 @@ function processCommand(input) {
     process.exit(0);
   } else if (command === '?') {
     console.log(shortcutsHelp);
+  } else if (command === '/debug') {
+    console.log(`${colors.yellow}Debug Information:${colors.reset}`);
+    console.log(`Optimization pipeline: ${optimizationEnabled ? 'ENABLED' : 'DISABLED'}`);
+    console.log(`Current working directory: ${cwd}`);
+    console.log(`API Key set: ${process.env.OPENAI_API_KEY ? 'YES' : 'NO'}`);
+    console.log(`Node version: ${process.version}`);
+    console.log(`Platform: ${process.platform}`);
+    console.log(`Security prompt enabled: ${config.securityPromptEnabled ? 'YES' : 'NO'}`);
+    console.log(`App name: ${config.appName}`);
   } else if (command === '/api') {
     optimizationEnabled = true;
     console.log(`${colors.purple}OpenAI API integration enabled!${colors.reset}`);
@@ -429,8 +439,12 @@ function processCommand(input) {
     console.log(`${colors.red}Unknown command: ${command}${colors.reset}`);
     console.log(`Type ${colors.purple}/help${colors.reset} for available commands`);
   } else if (command) {
+    // Debug optimization status
+    console.log(`${colors.gray}Debug: Optimization status = ${optimizationEnabled ? 'ENABLED' : 'DISABLED'}${colors.reset}`);
+    
     // If optimization is enabled, use pipeline
     if (optimizationEnabled) {
+      console.log(`${colors.gray}Using optimization pipeline...${colors.reset}`);
       processWithOptimization(command);
     } else {
       // Process as a basic prompt - suggest enabling optimization
