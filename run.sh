@@ -56,9 +56,18 @@ fi
 # If you pass "compress-and-run", execute the query directly with codex
 if [[ "$1" == "compress-and-run" ]]; then
   shift
-  query="$1"
+  # Store the entire remaining argument list as the query to handle spaces properly
+  query="$*"
   
-  # Run codex directly
+  echo "📝 Processing query: \"$query\""
+  
+  # Check if codex.sh is executable, if not make it so
+  if [[ ! -x "$SCRIPT_DIR/mysite/codex.sh" ]]; then
+    echo "🔑 Setting executable permissions on codex.sh"
+    chmod +x "$SCRIPT_DIR/mysite/codex.sh"
+  fi
+  
+  # Run codex directly with proper quoting
   cd "$SCRIPT_DIR/mysite" && ./codex.sh codex -q "$query"
   
   exit $?

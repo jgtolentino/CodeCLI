@@ -257,10 +257,12 @@ async function processWithOptimization(input) {
   
   try {
     // Define the command to run the actual pipeline
-    const command = `cd ${projectRoot} && bash ./run.sh compress-and-run "${input}"`;
+    // Properly escape the input to handle quotes and special characters
+    const escapedInput = input.replace(/"/g, '\\"').replace(/`/g, '\\`');
+    const command = `cd "${projectRoot}" && bash ./run.sh compress-and-run "${escapedInput}"`;
     
     // Execute the command
-    exec(command, (error, stdout, stderr) => {
+    exec(command, { shell: '/bin/bash' }, (error, stdout, stderr) => {
       // Clear thinking dots
       clearInterval(thinkingInterval);
       
@@ -336,17 +338,37 @@ function processWithDirectPipeline(input) {
  * @returns {string} Simulated response
  */
 function generateSimulatedResponse(input) {
+  // Clean up the input to handle partial fragments or corrupted text
+  const cleanedInput = input
+    .replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '') // Remove ANSI color codes
+    .replace(/\|\s*node\s+codex-cli\.js\)?)?/g, '') // Remove node command fragments
+    .replace(/\s*\|\s*$/, '') // Remove trailing pipes
+    .replace(/│\s*[A-Za-z\s]*\s*│/g, '') // Remove box drawing fragments
+    .replace(/\bcd\s+\/[^\n]+/g, '') // Remove cd commands
+    .trim();
+
+  // If input is just garbage or extremely short after cleaning, provide a generic response
+  if (cleanedInput.length < 5 || cleanedInput.match(/^[^a-zA-Z0-9]*$/)) {
+    return "I'm not sure I understand your request. Could you please provide a more complete question?";
+  }
+  
+  console.log(`${colors.gray}Cleaned input: "${cleanedInput}"${colors.reset}`);
+  
   // Simple responses for common queries
-  if (input.match(/hello|hi|hey/i)) {
+  if (cleanedInput.match(/hello|hi|hey/i)) {
     return "Hello! How can I assist you with your project today?";
-  } else if (input.match(/help|assist/i)) {
+  } else if (cleanedInput.match(/help|assist/i)) {
     return "I'm here to help with coding, file analysis, and answering questions. What would you like to know?";
-  } else if (input.match(/what can you do|capabilities/i)) {
+  } else if (cleanedInput.match(/what can you do|capabilities/i)) {
     return "I can help with coding tasks, analyze files, explain concepts, and assist with project development. Just ask!";
-  } else if (input.match(/files|list files|show files/i)) {
+  } else if (cleanedInput.match(/files|list files|show files/i)) {
     return `Here are some files in the current directory:\n${listFilesInCurrentDir()}`;
+  } else if (cleanedInput.match(/api\s+key|get\s+key|check\s+key/i)) {
+    return "To set up or check your API key, you can use the environment variable OPENAI_API_KEY. You can set it with:\n\nexport OPENAI_API_KEY=\"your-api-key-here\"\n\nYou can also add this to your .env file in the project directory.";
+  } else if (cleanedInput.match(/claude|optimizer|tools/i)) {
+    return "The Claude Optimizer tool helps you optimize prompts and interactions with Claude AI. You can use it to analyze prompts, create templates, and manage Claude projects. Make sure all scripts have executable permissions with 'chmod +x' if you encounter any permission issues.";
   } else {
-    return `I'll help you with: "${input}"\n\nWhat specific information are you looking for?`;
+    return `I'll help you with: "${cleanedInput}"\n\nCould you provide more details about what you're looking for?`;
   }
 }
 
@@ -385,11 +407,22 @@ function getScriptDir() {
 function runCommand(command) {
   const projectRoot = getScriptDir();
   
-  exec(`cd ${projectRoot} && ${command}`, (error, stdout, stderr) => {
+  console.log(`${colors.gray}Executing: ${command}${colors.reset}`);
+  
+  // Using proper shell and quoted paths for better handling of special characters
+  exec(`cd "${projectRoot}" && ${command}`, { shell: '/bin/bash' }, (error, stdout, stderr) => {
     if (error) {
-      console.error(`${colors.red}${stderr}${colors.reset}`);
+      console.error(`${colors.red}Error executing command:${colors.reset}`);
+      console.error(`${colors.red}${stderr || error.message}${colors.reset}`);
+      
+      // Check for common issues and provide helpful messages
+      if (stderr && stderr.includes('Permission denied')) {
+        console.log(`${colors.yellow}Tip: This might be a permissions issue. Try running:${colors.reset}`);
+        console.log(`chmod +x "${projectRoot}/${command.split(' ')[0].replace('./', '')}"`);
+      }
       return;
     }
+    
     console.log(stdout);
   });
 }
