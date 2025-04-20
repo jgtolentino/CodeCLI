@@ -373,6 +373,60 @@ The optimization pipeline reduces token usage by 90% through:
 function processCommand(input) {
   const command = input.trim();
 
+  // Handle common shell commands
+  if (command.startsWith('cd ')) {
+    // Change directory
+    const targetDir = command.substring(3).trim();
+    try {
+      // Check if directory exists
+      if (fs.existsSync(targetDir) && fs.statSync(targetDir).isDirectory()) {
+        process.chdir(targetDir);
+        console.log(`${colors.green}Changed directory to: ${targetDir}${colors.reset}`);
+        // Update the current working directory variable
+        cwd = process.cwd();
+        console.log(`${colors.gray}cwd: ${cwd}${colors.reset}`);
+      } else {
+        console.log(`${colors.red}Directory not found: ${targetDir}${colors.reset}`);
+      }
+    } catch (error) {
+      console.log(`${colors.red}Error changing directory: ${error.message}${colors.reset}`);
+    }
+    return;
+  } else if (command === 'cd') {
+    // cd without arguments goes to home directory
+    try {
+      process.chdir(os.homedir());
+      console.log(`${colors.green}Changed directory to home: ${os.homedir()}${colors.reset}`);
+      // Update the current working directory variable
+      cwd = process.cwd();
+      console.log(`${colors.gray}cwd: ${cwd}${colors.reset}`);
+    } catch (error) {
+      console.log(`${colors.red}Error changing to home directory: ${error.message}${colors.reset}`);
+    }
+    return;
+  } else if (command === 'pwd') {
+    // Print working directory
+    console.log(`${colors.yellow}Current directory: ${process.cwd()}${colors.reset}`);
+    return;
+  } else if (command === 'ls' || command === 'dir') {
+    // List files in current directory
+    try {
+      const files = fs.readdirSync(process.cwd());
+      console.log(`${colors.yellow}Contents of ${process.cwd()}:${colors.reset}`);
+      files.forEach(file => {
+        const stats = fs.statSync(path.join(process.cwd(), file));
+        if (stats.isDirectory()) {
+          console.log(`${colors.blue}${file}/`);
+        } else {
+          console.log(`${file}`);
+        }
+      });
+    } catch (error) {
+      console.log(`${colors.red}Error listing directory: ${error.message}${colors.reset}`);
+    }
+    return;
+  }
+
   // Handle special commands
   if (command === '/help' || command === '/h') {
     console.log(helpText);
