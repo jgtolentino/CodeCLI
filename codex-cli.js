@@ -181,6 +181,9 @@ function startApp() {
   // Check API key first
   checkApiKey();
   
+  // Enable optimization pipeline by default
+  optimizationEnabled = true;
+  
   // Print welcome message
   console.log(`\n${colors.yellow}✦ Welcome to ${colors.reset}${colors.white}${config.appName}${colors.reset} research preview!\n`);
   console.log(`${colors.gray}/help for help${colors.reset}`);
