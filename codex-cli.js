@@ -341,7 +341,7 @@ function generateSimulatedResponse(input) {
   // Clean up the input to handle partial fragments or corrupted text
   const cleanedInput = input
     .replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '') // Remove ANSI color codes
-    .replace(/\|\s*node\s+codex-cli\.js\)?)?/g, '') // Remove node command fragments
+    .replace(/\|\s*node\s+codex-cli\.js\)?/g, '') // Remove node command fragments
     .replace(/\s*\|\s*$/, '') // Remove trailing pipes
     .replace(/│\s*[A-Za-z\s]*\s*│/g, '') // Remove box drawing fragments
     .replace(/\bcd\s+\/[^\n]+/g, '') // Remove cd commands
