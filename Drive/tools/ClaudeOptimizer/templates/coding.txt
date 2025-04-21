@@ -1,0 +1,18 @@
+# Coding Task
+
+## Requirements
+I need code to solve the following problem:
+
+[Describe the coding problem here]
+
+## Specifications
+- Language: [programming language]
+- Input: [describe input format]
+- Output: [describe expected output]
+- Constraints: [any limitations or constraints]
+
+## Additional Notes
+- Please include comments explaining the code
+- If there are multiple approaches, explain the trade-offs
+
+Thank you!

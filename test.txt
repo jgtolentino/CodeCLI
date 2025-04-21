@@ -1,0 +1,5 @@
+This is a test prompt for the CodeCLI.
+
+How would I access a file at "/Users/tbwa/My Drive/tools/ClaudeOptimizer/data/samples/simple_prompt.txt"?
+
+Also, what can I do with files in "/Users/tbwa/My Drive/tools/ClaudeOptimizer/output/sample_project"?

@@ -1,0 +1,14 @@
+# Default Prompt Template
+
+## Instructions
+Please provide a detailed response to the following question:
+
+[Your question or task here]
+
+## Response Format
+- Start with a brief summary
+- Include detailed explanations
+- Use examples where relevant
+- End with a conclusion
+
+Thank you!

@@ -1,0 +1,15 @@
+# Prompt Analysis for test.txt
+
+Word count: 27
+Sentence count: 3
+Average sentence length: 9.0 words
+
+## Content check:
+- Examples included: No
+- Clear instructions: No
+- Structured format: Yes
+
+## Recommendations:
+- Add more detail to your prompt for better results
+- Include examples to guide Claude's response format
+- Add clearer instructions about what you want

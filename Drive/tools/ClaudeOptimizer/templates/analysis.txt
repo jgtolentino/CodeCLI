@@ -1,0 +1,19 @@
+# Analysis Request
+
+## Data/Context
+[Provide the data or context to be analyzed]
+
+## Analysis Goals
+Please analyze the above information with these goals in mind:
+1. [First analysis goal]
+2. [Second analysis goal]
+3. [Third analysis goal]
+
+## Required Output
+Please structure your analysis as follows:
+- Key findings
+- Detailed breakdown
+- Recommendations
+- Limitations of the analysis
+
+Thank you!

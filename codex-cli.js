@@ -191,9 +191,10 @@ function startApp() {
   // Print tips
   console.log(`Tips for getting started:\n`);
   console.log(`1. Run /terminal-setup to set up terminal integration`);
-  console.log(`2. Use ${config.appName} for file analysis, coding, and bash commands`);
-  console.log(`3. Be specific in your requests for the best results`);
-  console.log(`4. ${colors.brightGreen}✓${colors.reset} Run /init to create a ${config.mdFilename} file\n`);
+  console.log(`2. Run /setup-openai to enable real AI code generation`);
+  console.log(`3. Use ${config.appName} for file analysis, coding, and bash commands`);
+  console.log(`4. Be specific in your requests for the best results`);
+  console.log(`5. ${colors.brightGreen}✓${colors.reset} Run /init to create a ${config.mdFilename} file\n`);
 
   // Home directory warning
   if (cwd === os.homedir()) {
@@ -213,6 +214,7 @@ ${colors.yellow}${config.appName} CLI Commands:${colors.reset}
   /init                Create a ${config.mdFilename} file in the current directory
   /terminal-setup      Setup terminal integration
   /test-openai         Test OpenAI API connectivity
+  /setup-openai        Set up OpenAI API for code generation 
   /build               Build the static site
   /serve               Start the server
   /install-mcp         Install and start the MCP filesystem server
@@ -234,6 +236,7 @@ ${colors.yellow}Shortcuts:${colors.reset}
   /t                   Test OpenAI API
   /i                   Install MCP server
   /setup               Setup full environment
+  /setup-openai        Setup OpenAI code generation
   /api                 Enable API with optimization
 `;
 
@@ -561,6 +564,9 @@ function processCommand(input) {
   } else if (command === '/setup') {
     console.log(`${colors.yellow}Setting up the full environment...${colors.reset}`);
     runCommand('./run.sh setup');
+  } else if (command === '/setup-openai') {
+    console.log(`${colors.yellow}Setting up OpenAI API for code generation...${colors.reset}`);
+    runCommand('./run.sh setup-openai');
   } else if (command.startsWith('/')) {
     console.log(`${colors.red}Unknown command: ${command}${colors.reset}`);
     console.log(`Type ${colors.purple}/help${colors.reset} for available commands`);

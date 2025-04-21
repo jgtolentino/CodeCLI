@@ -10,6 +10,9 @@ Codex is a lightweight static site generator that transforms JSON data and HTML 
 - **Express Server**: Preview your site locally with the built-in server
 - **OpenAI API Integration**: Connectivity to OpenAI's API for future AI features
 - **Docker & CI/CD Ready**: Containerized setup with GitHub Actions for modern workflows
+- **Interactive CLI**: Claude-like CLI for improved user experience and simplified commands
+- **Claude Optimizer Integration**: Optimize prompts and sessions with the built-in Claude Optimizer tool
+- **Path Handling Improvements**: Properly handle paths with spaces and special characters
 
 ## Quick Start
 
@@ -267,6 +270,62 @@ The Docker setup has been enhanced with resilience features to handle common iss
 
 These enhancements ensure that temporary issues don't cause catastrophic failures and that the service can recover gracefully from common problems.
 
+## Interactive CLI and Claude Optimizer
+
+Codex includes an interactive CLI with Claude-like styling and functionality for an improved user experience.
+
+### Using the CLI
+
+To start the interactive CLI:
+
+```bash
+node codex-cli.js
+```
+
+The CLI supports the following commands:
+
+- `/help` - Show available commands
+- `/init` - Create a CODEX.md file in the current directory
+- `/terminal-setup` - Setup terminal integration
+- `/test-openai` - Test OpenAI API connectivity
+- `/build` - Build the static site
+- `/serve` - Start the server
+- `/install-mcp` - Install and start the MCP filesystem server
+- `/setup` - Setup the full environment
+- `/api` - Enable OpenAI API integration with optimization
+
+After enabling the API integration with `/api`, you can type natural language queries directly into the CLI, and they will be processed through the optimization pipeline.
+
+### Claude Optimizer Integration
+
+The Codex CLI integrates with the Claude Optimizer tool for improved prompt optimization. The Claude Optimizer provides several features:
+
+- **Prompt Analysis**: Analyze prompts for clarity, structure, and effectiveness
+- **Session Optimization**: Optimize multi-turn conversations for better results
+- **Template Generation**: Create standardized templates for common use cases
+- **Direct Claude Integration**: Send prompts directly to Claude and capture responses
+
+To use the Claude Optimizer from the command line:
+
+```bash
+cd /path/to/Claude/Optimizer
+./optimizer.sh analyze path/to/prompt.txt
+./optimizer.sh optimize path/to/session.txt
+./optimizer.sh template coding --output path/to/output.txt
+./optimizer.sh run path/to/prompt.txt --output path/to/response.txt
+```
+
+### Path Handling Improvements
+
+The CLI and scripts have been enhanced to properly handle paths with spaces and special characters:
+
+- Proper escaping and quoting of paths in shell commands
+- Support for paths with spaces in the Claude Optimizer integration
+- Automatic setting of executable permissions on scripts
+- Improved error handling for permission issues
+
+These improvements ensure that the CLI and tool integrations work correctly in all environments, regardless of path complexity.
+
 ### Architecture
 
 ```
@@ -279,6 +338,12 @@ These enhancements ensure that temporary issues don't cause catastrophic failure
 ┌─────────────────┐     ┌─────────────────┐
 │  Repository     │     │   OpenAI API    │
 │   Context       │     │                 │
+└─────────────────┘     └─────────────────┘
+        │                        │
+        v                        v
+┌─────────────────┐     ┌─────────────────┐
+│ Claude          │     │ Interactive CLI │
+│ Optimizer       │────▶│ (User Interface)│
 └─────────────────┘     └─────────────────┘
 ```
 

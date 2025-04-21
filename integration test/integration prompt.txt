@@ -1,0 +1,11 @@
+
+# Test Prompt for Integration
+
+Please help me understand how to use paths with spaces in bash scripts.
+For example, how would I access a file at:
+"/Users/tbwa/My Drive/tools/ClaudeOptimizer/data/samples/simple_prompt.txt"?
+
+## Additional Questions
+- How can I run the Claude Optimizer tool from Codex CLI?
+- What's the best way to handle paths with spaces in shell scripts?
+

@@ -1,0 +1,12 @@
+# Prompt Analysis for integration prompt.txt
+
+Word count: 57
+Sentence count: 3
+Average sentence length: 19.0 words
+
+## Content check:
+- Examples included: Yes
+- Clear instructions: Yes
+- Structured format: Yes
+
+## Recommendations:

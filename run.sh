@@ -67,9 +67,37 @@ if [[ "$1" == "compress-and-run" ]]; then
     chmod +x "$SCRIPT_DIR/mysite/codex.sh"
   fi
   
-  # Run codex directly with proper quoting
-  cd "$SCRIPT_DIR/mysite" && ./codex.sh codex -q "$query"
+  # Check if this is a code generation request
+  if [[ "$query" == *"code "* ]] || [[ "$query" == *"implement "* ]] || [[ "$query" == *"create "* ]] || 
+     [[ "$query" == *"write "* ]] || [[ "$query" == *"function "* ]] || [[ "$query" == *"script "* ]]; then
+    
+    # Check if OpenAI key is set
+    if [[ -n "$OPENAI_API_KEY" ]]; then
+      echo "🤖 Detected code generation request, using OpenAI..."
+      
+      # Ensure the codex-openai.js exists and is properly configured
+      if [[ -f "$SCRIPT_DIR/mysite/codex-openai.js" ]]; then
+        cd "$SCRIPT_DIR/mysite" && node codex-openai.js "$query"
+      else
+        echo "❌ Error: OpenAI code generation script not found."
+        echo "Run './setup-openai.sh' to set up OpenAI integration."
+      fi
+    else
+      echo "⚠️ OpenAI API key not set. Using fallback response..."
+      cd "$SCRIPT_DIR/mysite" && ./codex.sh codex -q "$query"
+    fi
+  else
+    # For non-code queries, run the standard processor
+    cd "$SCRIPT_DIR/mysite" && ./codex.sh codex -q "$query"
+  fi
   
+  exit $?
+fi
+
+# If you pass "setup-openai", run the OpenAI setup script
+if [[ "$1" == "setup-openai" ]]; then
+  echo "🔧 Setting up OpenAI integration..."
+  "$SCRIPT_DIR/setup-openai.sh"
   exit $?
 fi
 
